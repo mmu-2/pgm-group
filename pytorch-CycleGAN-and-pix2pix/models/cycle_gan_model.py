@@ -3,6 +3,7 @@ import itertools
 from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
+from util.diff_augment import DiffAugment
 
 
 class CycleGANModel(BaseModel):
@@ -128,10 +129,16 @@ class CycleGANModel(BaseModel):
         We also call loss_D.backward() to calculate the gradients.
         """
         # Real
-        pred_real = netD(real)
+        if self.opt.use_diffaug:
+            pred_real = netD(DiffAugment(real))
+        else:
+            pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
-        pred_fake = netD(fake.detach())
+        if self.opt.use_diffaug:
+            pred_fake = netD(DiffAugment(fake.detach()))
+        else:
+            pred_fake = netD(fake.detach())
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
         loss_D = (loss_D_real + loss_D_fake) * 0.5
@@ -166,9 +173,15 @@ class CycleGANModel(BaseModel):
             self.loss_idt_B = 0
 
         # GAN loss D_A(G_A(A))
-        self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
+        if self.opt.use_diffaug:
+            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B)), True)
+        else:
+            self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
         # GAN loss D_B(G_B(B))
-        self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
+        if self.opt.use_diffaug:
+            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A)), True)
+        else:
+            self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
         # Forward cycle loss || G_B(G_A(A)) - A||
         self.loss_cycle_A = self.criterionCycle(self.rec_A, self.real_A) * lambda_A
         # Backward cycle loss || G_A(G_B(B)) - B||

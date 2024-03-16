@@ -130,13 +130,13 @@ class CycleGANModel(BaseModel):
         """
         # Real
         if self.opt.use_diffaug:
-            pred_real = netD(DiffAugment(real))
+            pred_real = netD(DiffAugment(real, 'color,translation,cutout'))
         else:
             pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         if self.opt.use_diffaug:
-            pred_fake = netD(DiffAugment(fake.detach()))
+            pred_fake = netD(DiffAugment(fake.detach(), 'color,translation,cutout'))
         else:
             pred_fake = netD(fake.detach())
         loss_D_fake = self.criterionGAN(pred_fake, False)
@@ -174,12 +174,12 @@ class CycleGANModel(BaseModel):
 
         # GAN loss D_A(G_A(A))
         if self.opt.use_diffaug:
-            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B)), True)
+            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B, 'color,translation,cutout')), True)
         else:
             self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
         # GAN loss D_B(G_B(B))
         if self.opt.use_diffaug:
-            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A)), True)
+            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A, 'color,translation,cutout')), True)
         else:
             self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
         # Forward cycle loss || G_B(G_A(A)) - A||

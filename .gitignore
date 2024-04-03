@@ -1,3 +1,5 @@
 rawdata/
 .DS_Store
 *.pyc
+results/
+checkpoints/

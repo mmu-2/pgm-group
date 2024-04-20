@@ -53,6 +53,12 @@ class BaseOptions():
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
         # Custom dataset augmentations
         parser.add_argument('--use_diffaug', action='store_true', help='diffential augmentation to augment dataset')
+        parser.add_argument('--rand_brightness', action='store_true', help='random brightness augmentation')
+        parser.add_argument('--rand_saturation', action='store_true', help='random saturation augmentation')
+        parser.add_argument('--rand_contrast', action='store_true', help='random contrast augmentation')
+        parser.add_argument('--rand_translation', action='store_true', help='random translation augmentation')
+        parser.add_argument('--rand_cutout', action='store_true', help='random cutout augmentation')
+
         # additional parameters
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')

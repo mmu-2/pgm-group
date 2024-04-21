@@ -78,9 +78,11 @@ class CycleGANModel(BaseModel):
 
         if self.isTrain:  # define discriminators
             self.netD_A = networks.define_D(opt.output_nc, opt.ndf, opt.netD,
-                                            opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)
+                                            opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids,
+                                            use_specnorm=opt.use_specnorm)
             self.netD_B = networks.define_D(opt.input_nc, opt.ndf, opt.netD,
-                                            opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)
+                                            opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids,
+                                            use_specnorm=opt.use_specnorm)
 
         if self.isTrain:
             if opt.lambda_identity > 0.0:  # only works when input and output images have the same number of channels
@@ -130,13 +132,35 @@ class CycleGANModel(BaseModel):
         """
         # Real
         if self.opt.use_diffaug:
-            pred_real = netD(DiffAugment(real, 'color,translation,cutout'))
+            policy = ''
+            if self.opt.rand_brightness:
+                policy += 'brightness'
+            if self.opt.rand_saturation:
+                policy += 'saturation'
+            if self.opt.rand_contrast:
+                policy += 'contrast'
+            if self.opt.rand_translation:
+                policy += 'translation'
+            if self.opt.rand_cutout:
+                policy += 'cutout'
+            pred_real = netD(DiffAugment(real, policy))
         else:
             pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         if self.opt.use_diffaug:
-            pred_fake = netD(DiffAugment(fake.detach(), 'color,translation,cutout'))
+            policy = ''
+            if self.opt.rand_brightness:
+                policy += 'brightness'
+            if self.opt.rand_saturation:
+                policy += 'saturation'
+            if self.opt.rand_contrast:
+                policy += 'contrast'
+            if self.opt.rand_translation:
+                policy += 'translation'
+            if self.opt.rand_cutout:
+                policy += 'cutout'
+            pred_fake = netD(DiffAugment(fake.detach(), policy))
         else:
             pred_fake = netD(fake.detach())
         loss_D_fake = self.criterionGAN(pred_fake, False)
@@ -174,12 +198,34 @@ class CycleGANModel(BaseModel):
 
         # GAN loss D_A(G_A(A))
         if self.opt.use_diffaug:
-            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B, 'color,translation,cutout')), True)
+            policy = ''
+            if self.opt.rand_brightness:
+                policy += 'brightness'
+            if self.opt.rand_saturation:
+                policy += 'saturation'
+            if self.opt.rand_contrast:
+                policy += 'contrast'
+            if self.opt.rand_translation:
+                policy += 'translation'
+            if self.opt.rand_cutout:
+                policy += 'cutout'
+            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B, policy)), True)
         else:
             self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
         # GAN loss D_B(G_B(B))
         if self.opt.use_diffaug:
-            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A, 'color,translation,cutout')), True)
+            policy = ''
+            if self.opt.rand_brightness:
+                policy += 'brightness'
+            if self.opt.rand_saturation:
+                policy += 'saturation'
+            if self.opt.rand_contrast:
+                policy += 'contrast'
+            if self.opt.rand_translation:
+                policy += 'translation'
+            if self.opt.rand_cutout:
+                policy += 'cutout'
+            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A, policy)), True)
         else:
             self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
         # Forward cycle loss || G_B(G_A(A)) - A||

@@ -37,6 +37,8 @@ class BaseOptions():
         parser.add_argument('--init_type', type=str, default='normal', help='network initialization [normal | xavier | kaiming | orthogonal]')
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
+        # custom model parameters
+        parser.add_argument('--use_specnorm', action='store_true', help='use spectral normalization in discriminator')
         # dataset parameters
         parser.add_argument('--dataset_mode', type=str, default='unaligned', help='chooses how datasets are loaded. [unaligned | aligned | single | colorization]')
         parser.add_argument('--direction', type=str, default='AtoB', help='AtoB or BtoA')
@@ -49,7 +51,14 @@ class BaseOptions():
         parser.add_argument('--preprocess', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop | crop | scale_width | scale_width_and_crop | none]')
         parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
-        parser.add_argument('--use_diffaug', action='store_true')
+        # Custom dataset augmentations
+        parser.add_argument('--use_diffaug', action='store_true', help='diffential augmentation to augment dataset')
+        parser.add_argument('--rand_brightness', action='store_true', help='random brightness augmentation')
+        parser.add_argument('--rand_saturation', action='store_true', help='random saturation augmentation')
+        parser.add_argument('--rand_contrast', action='store_true', help='random contrast augmentation')
+        parser.add_argument('--rand_translation', action='store_true', help='random translation augmentation')
+        parser.add_argument('--rand_cutout', action='store_true', help='random cutout augmentation')
+
         # additional parameters
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')

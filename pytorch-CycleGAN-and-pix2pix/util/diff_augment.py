@@ -72,7 +72,9 @@ def rand_cutout(x, ratio=0.5):
 
 
 AUGMENT_FNS = {
-    'color': [rand_brightness, rand_saturation, rand_contrast],
+    'brightness': [rand_brightness],
+    'saturation': [rand_saturation],
+    'contrast': [rand_contrast],
     'translation': [rand_translation],
     'cutout': [rand_cutout],
 }

@@ -132,35 +132,35 @@ class CycleGANModel(BaseModel):
         """
         # Real
         if self.opt.use_diffaug:
-            policy = ''
+            policy = []
             if self.opt.rand_brightness:
-                policy += 'brightness'
+                policy += ['brightness']
             if self.opt.rand_saturation:
-                policy += 'saturation'
+                policy += ['saturation']
             if self.opt.rand_contrast:
-                policy += 'contrast'
+                policy += ['contrast']
             if self.opt.rand_translation:
-                policy += 'translation'
+                policy += ['translation']
             if self.opt.rand_cutout:
-                policy += 'cutout'
-            pred_real = netD(DiffAugment(real, policy))
+                policy += ['cutout']
+            pred_real = netD(DiffAugment(real, ",".join(policy)))
         else:
             pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
         # Fake
         if self.opt.use_diffaug:
-            policy = ''
+            policy = []
             if self.opt.rand_brightness:
-                policy += 'brightness'
+                policy += ['brightness']
             if self.opt.rand_saturation:
-                policy += 'saturation'
+                policy += ['saturation']
             if self.opt.rand_contrast:
-                policy += 'contrast'
+                policy += ['contrast']
             if self.opt.rand_translation:
-                policy += 'translation'
+                policy += ['translation']
             if self.opt.rand_cutout:
-                policy += 'cutout'
-            pred_fake = netD(DiffAugment(fake.detach(), policy))
+                policy += ['cutout']
+            pred_fake = netD(DiffAugment(fake.detach(), ",".join(policy)))
         else:
             pred_fake = netD(fake.detach())
         loss_D_fake = self.criterionGAN(pred_fake, False)
@@ -198,34 +198,34 @@ class CycleGANModel(BaseModel):
 
         # GAN loss D_A(G_A(A))
         if self.opt.use_diffaug:
-            policy = ''
+            policy = []
             if self.opt.rand_brightness:
-                policy += 'brightness'
+                policy += ['brightness']
             if self.opt.rand_saturation:
-                policy += 'saturation'
+                policy += ['saturation']
             if self.opt.rand_contrast:
-                policy += 'contrast'
+                policy += ['contrast']
             if self.opt.rand_translation:
-                policy += 'translation'
+                policy += ['translation']
             if self.opt.rand_cutout:
-                policy += 'cutout'
-            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B, policy)), True)
+                policy += ['cutout']
+            self.loss_G_A = self.criterionGAN(self.netD_A(DiffAugment(self.fake_B, ",".join(policy))), True)
         else:
             self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
         # GAN loss D_B(G_B(B))
         if self.opt.use_diffaug:
-            policy = ''
+            policy = []
             if self.opt.rand_brightness:
-                policy += 'brightness'
+                policy += ['brightness']
             if self.opt.rand_saturation:
-                policy += 'saturation'
+                policy += ['saturation']
             if self.opt.rand_contrast:
-                policy += 'contrast'
+                policy += ['contrast']
             if self.opt.rand_translation:
-                policy += 'translation'
+                policy += ['translation']
             if self.opt.rand_cutout:
-                policy += 'cutout'
-            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A, policy)), True)
+                policy += ['cutout']
+            self.loss_G_B = self.criterionGAN(self.netD_B(DiffAugment(self.fake_A,  ",".join(policy))), True)
         else:
             self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_A), True)
         # Forward cycle loss || G_B(G_A(A)) - A||

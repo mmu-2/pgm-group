@@ -8,4 +8,5 @@ results/
 pytorch-CycleGAN-and-pix2pix/val_results/
 pytorch-CycleGAN-and-pix2pix/test_results/
 pytorch-CycleGAN-and-pix2pix/saved_models/
+pytorch-CycleGAN-and-pix2pix/datasets/
 *.txt
